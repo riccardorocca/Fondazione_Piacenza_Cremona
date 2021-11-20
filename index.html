@@ -13,28 +13,28 @@
   <iframe style="position:fixed; width:100%; height:100%; border:0" src="" id="api-frame" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" allow="autoplay; fullscreen; vr" allowvr allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
 
   <div class="buttons">
-    <button id="keyO">Città</button>
+    <button id="keyO">Città on</button>
     <button id="keyE">Sezione on</button>
-    <button id="keyF">Struttura geologica</button>
-    <button id="keyA">Mappa intera</button>
-    <button id="keyB">Topografia</button>
-    <button id="keyC">Inondazione on</button>
+    <button id="keyF">Struttura geologica off</button>
+    <button id="keyA1">Mappa ovest</button>
+    <button id="keyA2">Mappa est</button>
     <button id="keyD1">Topogr.</button>
     <button id="keyD2">Strutt.</button>
     <button id="keyD3">B&W</button>
+    <button id="keyC">Inondazione on</button>
     <button id="keyZ">Informazioni</button>
   </div>
 
   <!-- Your new script -->
   <script>
-    var model = '5a470b591d094e109379c688d2dd0e71';
+    var model = '8da5fc9e87c04b35b3e5e152a2f9b95f';
 
     //var timer;
 
     // Buttons
     buttonO = document.getElementById( 'keyO' );
-    buttonA = document.getElementById( 'keyA' );
-    buttonB = document.getElementById( 'keyB' );
+    buttonA1 = document.getElementById( 'keyA1' );
+    buttonA2 = document.getElementById( 'keyA2' );
     buttonC = document.getElementById( 'keyC' );
     buttonD1 = document.getElementById( 'keyD1' );
     buttonD2 = document.getElementById( 'keyD2' );
@@ -69,12 +69,12 @@
                 else if ( nodes[ prop ].name === "Citta Piacenza label" )          { var node_Piacenza_label = nodes[prop].instanceID; }
                 else if ( nodes[ prop ].name === "Citta Cremona" )                 { var node_Cremona        = nodes[prop].instanceID; }
                 else if ( nodes[ prop ].name === "Citta Cremona label" )           { var node_Cremona_label  = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Mappa topografia" )              { var node_Topo           = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Mappa topografia cut" )          { var node_Topo_clip      = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Fiume Po" )                      { var node_Po             = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Fiume Po cut" )                  { var node_Po_clip        = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Inondazione" && nodes[prop].type === "MatrixTransform" )                    { var node_Inonda         = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Inondazione cut" && nodes[prop].type === "MatrixTransform" )                { var node_Inonda_clip    = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Mappa est" )                     { var node_Mappa_est      = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Mappa ovest" )                   { var node_Mappa_ovest    = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Fiume Po est" )                  { var node_Po_est         = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Fiume Po ovest" )                { var node_Po_ovest       = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Inondazione est" && nodes[prop].type === "MatrixTransform" )                  { var node_Inonda_est   = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Inondazione ovest" && nodes[prop].type === "MatrixTransform" )                { var node_Inonda_ovest = nodes[prop].instanceID; }
                 else if ( nodes[ prop ].name === "Sezione" )                       { var node_Sezione        = nodes[prop].instanceID; }
                 else if ( nodes[ prop ].name === "Sezione cut" )                   { var node_Sezione_clip   = nodes[prop].instanceID; }
                 else if ( nodes[ prop ].name === "Struttura" )                     { var node_Struttura      = nodes[prop].instanceID; }
@@ -82,24 +82,22 @@
               }
             }
 
-            api.hide(node_Topo_clip);
-            api.hide(node_Po_clip);
-            api.hide(node_Inonda_clip);
             api.hide(node_Sezione_clip);
+            api.hide(node_Struttura);
 
             if ( node_Piacenza && node_Piacenza_label && node_Cremona && node_Cremona_label ) {
               buttonO.addEventListener( 'click', function() {
                 switch(buttonO.innerHTML) {
-                  case "Città":
-                    buttonO.innerHTML = " Città ";
+                  case "Città on":
+                    buttonO.innerHTML = "Città off";
                     buttonO.style.backgroundColor = "#888888";
                     api.hide(node_Piacenza);
                     api.hide(node_Piacenza_label);
                     api.hide(node_Cremona);
                     api.hide(node_Cremona_label);
                     break;
-                  case " Città ":
-                    buttonO.innerHTML = "Città";
+                  case "Città off":
+                    buttonO.innerHTML = "Città on";
                     buttonO.style.backgroundColor = "#1caad9";
                     api.show(node_Piacenza);
                     api.show(node_Piacenza_label);
@@ -110,63 +108,43 @@
               });
             }
 
-            if ( node_Topo && node_Topo_clip && node_Po && node_Po_clip && node_Inonda && node_Inonda_clip ) {
-              buttonA.addEventListener( 'click', function() {
-                switch(buttonA.innerHTML) {
-                  case "Mappa intera":
-                    buttonA.innerHTML = "Mappa ovest";
-                    buttonA.style.backgroundColor = "#888888";
-                    api.hide(node_Topo);
-                    api.hide(node_Po);
-                    api.hide(node_Inonda);
-                    if (buttonB.innerHTML == "Topografia") {
-                      api.show(node_Topo_clip);
-                      api.show(node_Po_clip);
-                    }
-                    if (buttonC.innerHTML != "Inondazione off") {
-                      api.show(node_Inonda_clip);
-                    }
-                    break;
+            if ( node_Mappa_ovest && node_Po_ovest && node_Inonda_ovest ) {
+              buttonA1.addEventListener( 'click', function() {
+                switch(buttonA1.innerHTML) {
                   case "Mappa ovest":
-                    buttonA.innerHTML = "Mappa intera";
-                    buttonA.style.backgroundColor = "#1caad9";
-                    api.hide(node_Topo_clip);
-                    api.hide(node_Po_clip);
-                    api.hide(node_Inonda_clip);
-                    if (buttonB.innerHTML == "Topografia") {
-                      api.show(node_Topo);
-                      api.show(node_Po);
-                    }
-                    if (buttonC.innerHTML != "Inondazione off") {
-                      api.show(node_Inonda);
-                    }
+                    buttonA1.innerHTML = " Mappa ovest ";
+                    buttonA1.style.backgroundColor = "#888888";
+                    api.hide(node_Mappa_ovest);
+                    api.hide(node_Po_ovest);
+                    api.hide(node_Inonda_ovest);
+                    break;
+                  case " Mappa ovest ":
+                    buttonA1.innerHTML = "Mappa ovest";
+                    buttonA1.style.backgroundColor = "#1caad9";
+                    api.show(node_Mappa_ovest);
+                    api.show(node_Po_ovest);
+                    api.show(node_Inonda_ovest);
                     break;
                 }
               });
             }
 
-            if ( node_Topo && node_Topo_clip && node_Po && node_Po_clip ) {
-              buttonB.addEventListener( 'click', function() {
-                switch(buttonB.innerHTML) {
-                  case "Topografia":
-                    buttonB.innerHTML = " Topografia ";
-                    buttonB.style.backgroundColor = "#888888";
-                    api.hide(node_Topo);
-                    api.hide(node_Po);
-                    api.hide(node_Topo_clip);
-                    api.hide(node_Po_clip);
+            if ( node_Mappa_est && node_Po_est && node_Inonda_est ) {
+              buttonA2.addEventListener( 'click', function() {
+                switch(buttonA2.innerHTML) {
+                  case "Mappa est":
+                    buttonA2.innerHTML = " Mappa est ";
+                    buttonA2.style.backgroundColor = "#888888";
+                    api.hide(node_Mappa_est);
+                    api.hide(node_Po_est);
+                    api.hide(node_Inonda_est);
                     break;
-                  case " Topografia ":
-                    buttonB.innerHTML = "Topografia";
-                    buttonB.style.backgroundColor = "#1caad9";
-                    if (buttonA.innerHTML == "Mappa intera") {
-                      api.show(node_Topo);
-                      api.show(node_Po);
-                    }
-                    else {
-                      api.show(node_Topo_clip);
-                      api.show(node_Po_clip);
-                    }
+                  case " Mappa est ":
+                    buttonA2.innerHTML = "Mappa est";
+                    buttonA2.style.backgroundColor = "#1caad9";
+                    api.show(node_Mappa_est);
+                    api.show(node_Po_est);
+                    api.show(node_Inonda_est);
                     break;
                 }
               });
@@ -178,41 +156,25 @@
               start_timer();
               buttonC.addEventListener( 'click', function() {
                 switch(buttonC.innerHTML) {
-                  case "Inondazione max":
-                    buttonC.innerHTML = "Inondazione off";
-                    buttonC.style.backgroundColor = "#888888";
-                    clearInterval(timer);
-                    api.hide(node_Inonda);
-                    api.hide(node_Inonda_clip);
-                    api.translate(node_Inonda, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
-                    api.translate(node_Inonda_clip, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
-                    break;
-                  case "Inondazione off":
+                  case "Inondazione min":
                     buttonC.innerHTML = "Inondazione on";
                     buttonC.style.backgroundColor = "#1caad9";
                     start_timer();
-                    if (buttonA.innerHTML == "Mappa intera") {
-                      api.show(node_Inonda);
-                    }
-                    else {
-                      api.show(node_Inonda_clip);
-                    }
                     break;
-                    case "Inondazione on":
-                      buttonC.innerHTML = "Inondazione max";
-                      buttonC.style.backgroundColor = "#1caad9";
-                      clearInterval(timer);
-                      api.translate(node_Inonda, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
-                      api.translate(node_Inonda_clip, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
-                      if (buttonA.innerHTML == "Mappa intera") {
-                        api.show(node_Inonda);
-                        api.hide(node_Inonda_clip);
-                      }
-                      else {
-                        api.show(node_Inonda_clip);
-                        api.hide(node_Inonda);
-                      }
-                      break;
+                  case "Inondazione on":
+                    buttonC.innerHTML = "Inondazione max";
+                    buttonC.style.backgroundColor = "#1caad9";
+                    clearInterval(timer);
+                    api.translate(node_Inonda, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
+                    api.translate(node_Inonda_clip, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
+                    break;
+                  case "Inondazione max":
+                    buttonC.innerHTML = "Inondazione min";
+                    buttonC.style.backgroundColor = "#888888";
+                    clearInterval(timer);
+                    api.translate(node_Inonda, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
+                    api.translate(node_Inonda_clip, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
+                    break;
                 }
               });
 
@@ -254,16 +216,16 @@
               });
             }
 
-            if ( node_Struttura && node_Struttura_clip ) {
+            if ( node_Struttura ) {
               buttonF.addEventListener( 'click', function() {
                 switch(buttonF.innerHTML) {
-                  case "Struttura":
-                    buttonF.innerHTML = " Struttura ";
+                  case "Struttura geologica on":
+                    buttonF.innerHTML = "Struttura geologica off";
                     buttonF.style.backgroundColor = "#888888";
                     api.hide(node_Struttura);
                     break;
-                  case " Struttura ":
-                    buttonF.innerHTML = "Struttura";
+                  case "Struttura geologica off":
+                    buttonF.innerHTML = "Struttura geologica on";
                     buttonF.style.backgroundColor = "#1caad9";
                     api.show(node_Struttura);
                     break;
@@ -379,10 +341,14 @@
 
     button:hover {opacity: 1;}
     button:active {font-weight: bold;}
+    #keyA1 {margin-top: 10px; width: 49%; display: inline; font-size: x-small;}
+    #keyA2 {margin-top: 10px; width: 48%; display: inline; font-size: x-small;}
+    #keyE {margin-top: 10px;}
     #keyD1 {background: #1caad9; width: 31%; display: inline; font-size: x-small;}
     #keyD2 {background: #888888; width: 32%; display: inline; font-size: x-small;}
     #keyD3 {background: #888888; width: 31%; display: inline; font-size: x-small;}
-    #keyF {margin-top: 10px;}
+    #keyF {background: #888888;}
+    #keyZ {margin-top: 10px;}
 
   </style>
 </body>
