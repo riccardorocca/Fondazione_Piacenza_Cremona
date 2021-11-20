@@ -19,6 +19,9 @@
     <button id="keyA">Mappa intera</button>
     <button id="keyB">Topografia</button>
     <button id="keyC">Inondazione on</button>
+    <button id="keyD1">Topogr.</button>
+    <button id="keyD2">Strutt.</button>
+    <button id="keyD3">B&W</button>
     <button id="keyZ">Informazioni</button>
   </div>
 
@@ -33,7 +36,9 @@
     buttonA = document.getElementById( 'keyA' );
     buttonB = document.getElementById( 'keyB' );
     buttonC = document.getElementById( 'keyC' );
-    buttonD = document.getElementById( 'keyD' );
+    buttonD1 = document.getElementById( 'keyD1' );
+    buttonD2 = document.getElementById( 'keyD2' );
+    buttonD3 = document.getElementById( 'keyD3' );
     buttonE = document.getElementById( 'keyE' );
     buttonF = document.getElementById( 'keyF' );
     buttonZ = document.getElementById( 'keyZ' );
@@ -269,6 +274,40 @@
           }
         });
 
+        api.getTextureList(function(err, textures) {
+          if(!err) {
+            for ( var prop in textures ) {
+              //alert(textures[prop].name);
+              if (textures[prop].name === "Topografia.jpg") { var texture_Topo = textures[prop].uid; }
+            }
+
+            if ( texture_Topo ) {
+              // Add button event
+              buttonD1.addEventListener( 'click', function() {
+                buttonD1.style.backgroundColor = "#1caad9";
+                buttonD2.style.backgroundColor = "#888888";
+                buttonD3.style.backgroundColor = "#888888";
+                api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Topografia.jpg', texture_Topo, function(err, texture_Topo) {});
+              });
+
+              buttonD2.addEventListener( 'click', function() {
+                buttonD1.style.backgroundColor = "#888888";
+                buttonD2.style.backgroundColor = "#1caad9";
+                buttonD3.style.backgroundColor = "#888888";
+                api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Faglie.jpg', texture_Topo, function(err, texture_Topo) {});
+              });
+
+              buttonD3.addEventListener( 'click', function() {
+                buttonD1.style.backgroundColor = "#888888";
+                buttonD2.style.backgroundColor = "#888888";
+                buttonD3.style.backgroundColor = "#1caad9";
+                api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Gray.jpg', texture_Topo,  function(err, texture_Topo) {});
+              });
+            }
+
+          }
+        });
+
         buttonZ.addEventListener( 'click', function() {
           window.open("https://sites.google.com/view/riccardorocca/home/drone-projects/fondazione-di-piacenza-e-cremona");
         });
@@ -340,8 +379,9 @@
 
     button:hover {opacity: 1;}
     button:active {font-weight: bold;}
-    #keyD {background: #888888;}
-    #keyA {margin-top: 10px;}
+    #keyD1 {background: #1caad9; width: 31%; display: inline; font-size: x-small;}
+    #keyD2 {background: #888888; width: 32%; display: inline; font-size: x-small;}
+    #keyD3 {background: #888888; width: 31%; display: inline; font-size: x-small;}
     #keyF {margin-top: 10px;}
 
   </style>
