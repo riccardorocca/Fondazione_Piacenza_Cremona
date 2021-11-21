@@ -58,7 +58,6 @@
       api.start();
       // Wait for viewer to be ready
       api.addEventListener( 'viewerready', function() {
-        var texture_Sezione
 
         // Get the object nodes
         api.getNodeMap( function ( err, nodes ) {
@@ -107,20 +106,17 @@
                       api.hide(node_Piacenza_label2);
                       api.show(node_Cremona_label1);
                       api.show(node_Piacenza_label1);
-                      api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Sezione1.jpg', texture_Sezione);
                     }
                     else {
                       api.hide(node_Cremona_label1);
                       api.hide(node_Piacenza_label1);
                       api.show(node_Cremona_label2);
                       api.show(node_Piacenza_label2);
-                      api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Sezione2.jpg', texture_Sezione);
                     }
                   });
                 }
               },1000); //time interval = 500 ms
             }
-
 
             if ( node_Piacenza && node_Piacenza_label1 && node_Piacenza_label2 && node_Cremona && node_Cremona_label1 && node_Cremona_label2 ) {
               buttonO.addEventListener( 'click', function() {
@@ -280,6 +276,27 @@
               //alert(textures[prop].name);
               if (textures[prop].name === "Topografia.jpg") { var texture_Topo = textures[prop].uid; }
               if (textures[prop].name === "Sezione2.jpg") { var texture_Sezione = textures[prop].uid; }
+            }
+
+            var azimuth;
+            if ( texture_Sezione ) {
+              setInterval(function(){
+                if (buttonO.innerHTML == "Città on") {
+                  api.getCameraLookAt(function(err, camera) {
+                    var Cx = camera.position[0];
+                    var Cy = camera.position[1];
+                    var Tx = camera.target[0];
+                    var Ty = camera.target[1];
+                    azimuth = Math.atan2(Cy-Ty, Cx-Tx);
+                    if ( azimuth>=-2.0 && azimuth<=1.14 ) {
+                      api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Sezione1.jpg', texture_Sezione, function(err, texture_Sezione) {});
+                    }
+                    else {
+                      api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Sezione2.jpg', texture_Sezione, function(err, texture_Sezione) {});
+                    }
+                  });
+                }
+              },100); //time interval = 500 ms
             }
 
             if ( texture_Topo ) {
