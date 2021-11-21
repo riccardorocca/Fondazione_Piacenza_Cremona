@@ -14,14 +14,14 @@
 
   <div class="buttons">
     <button id="keyO">Città on</button>
-    <button id="keyE">Sezione on</button>
-    <button id="keyF">Struttura geologica off</button>
     <button id="keyA1">Mappa ovest</button>
     <button id="keyA2">Mappa est</button>
     <button id="keyD1">Topogr.</button>
     <button id="keyD2">Strutt.</button>
     <button id="keyD3">B&W</button>
     <button id="keyC">Inondazione on</button>
+    <button id="keyE">Sezione on</button>
+    <button id="keyF">Struttura geologica off</button>
     <button id="keyZ">Informazioni</button>
   </div>
 
@@ -150,7 +150,7 @@
               });
             }
 
-            if ( node_Inonda && node_Inonda_clip ) {
+            if ( node_Inonda_ovest && node_Inonda_est ) {
               var baselevel = -4580;
               var timer;
               start_timer();
@@ -165,15 +165,15 @@
                     buttonC.innerHTML = "Inondazione max";
                     buttonC.style.backgroundColor = "#1caad9";
                     clearInterval(timer);
-                    api.translate(node_Inonda, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
-                    api.translate(node_Inonda_clip, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
+                    api.translate(node_Inonda_ovest, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
+                    api.translate(node_Inonda_est, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
                     break;
                   case "Inondazione max":
                     buttonC.innerHTML = "Inondazione min";
                     buttonC.style.backgroundColor = "#888888";
                     clearInterval(timer);
-                    api.translate(node_Inonda, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
-                    api.translate(node_Inonda_clip, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
+                    api.translate(node_Inonda_ovest, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
+                    api.translate(node_Inonda_est, [0,0,baselevel], {duration: 0, easing: 'easeOutQuad'});
                     break;
                 }
               });
@@ -184,8 +184,8 @@
                   alpha += Math.PI/100;
                   if ( alpha >= 2*Math.PI ) { alpha = 0 };
                   var z = baselevel * (Math.cos(alpha)+1)/2;
-                  api.translate(node_Inonda, [0,0,z], {duration: 0, easing: 'easeOutQuad'});
-                  api.translate(node_Inonda_clip, [0,0,z], {duration: 0, easing: 'easeOutQuad'});
+                  api.translate(node_Inonda_ovest, [0,0,z], {duration: 0, easing: 'easeOutQuad'});
+                  api.translate(node_Inonda_est, [0,0,z], {duration: 0, easing: 'easeOutQuad'});
                 }, 50); //time interval = 500 ms
               }
 
