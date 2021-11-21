@@ -14,20 +14,21 @@
 
   <div class="buttons">
     <button id="keyO">Città on</button>
-    <button id="keyA1">Mappa ovest</button>
+    <button id="keyA1"> Mappa ovest </button>
     <button id="keyA2">Mappa est</button>
     <button id="keyD1">Topogr.</button>
     <button id="keyD2">Strutt.</button>
     <button id="keyD3">B&W</button>
     <button id="keyC">Inondazione on</button>
-    <button id="keyE">Sezione on</button>
-    <button id="keyF">Struttura geologica off</button>
+    <button id="keyE">Sezione clip</button>
+    <button id="keyF">Struttura geologica on</button>
     <button id="keyZ">Informazioni</button>
+    <button id="keyY">Look At</button>
   </div>
 
   <!-- Your new script -->
   <script>
-    var model = '8da5fc9e87c04b35b3e5e152a2f9b95f';
+    var model = '0f10cd27e37a464da4aeea185ba3434c';
 
     //var timer;
 
@@ -42,6 +43,7 @@
     buttonE = document.getElementById( 'keyE' );
     buttonF = document.getElementById( 'keyF' );
     buttonZ = document.getElementById( 'keyZ' );
+    buttonY = document.getElementById( 'keyY' );
 
     // Variables
     version = '1.8.2';
@@ -56,8 +58,7 @@
       api.start();
       // Wait for viewer to be ready
       api.addEventListener( 'viewerready', function() {
-        //api.hideAnnotation(0);
-        //api.hideAnnotation(1);
+        var texture_Sezione
 
         // Get the object nodes
         api.getNodeMap( function ( err, nodes ) {
@@ -65,44 +66,80 @@
             for ( var prop in nodes ) {
               if ( nodes.hasOwnProperty( prop ) ) {
                 //alert(nodes[prop].instanceID+" : "+nodes[prop].name+" : "+nodes[prop].nodeMask+" : "+nodes[prop].type+" : "+nodes[prop].localMatrix+" ; "+nodes[prop].worldMatrix);
-                if      ( nodes[ prop ].name === "Citta Piacenza" )                { var node_Piacenza       = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Citta Piacenza label" )          { var node_Piacenza_label = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Citta Cremona" )                 { var node_Cremona        = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Citta Cremona label" )           { var node_Cremona_label  = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Mappa est" )                     { var node_Mappa_est      = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Mappa ovest" )                   { var node_Mappa_ovest    = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Fiume Po est" )                  { var node_Po_est         = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Fiume Po ovest" )                { var node_Po_ovest       = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Inondazione est" && nodes[prop].type === "MatrixTransform" )                  { var node_Inonda_est   = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Inondazione ovest" && nodes[prop].type === "MatrixTransform" )                { var node_Inonda_ovest = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Sezione" )                       { var node_Sezione        = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Sezione cut" )                   { var node_Sezione_clip   = nodes[prop].instanceID; }
-                else if ( nodes[ prop ].name === "Struttura" )                     { var node_Struttura      = nodes[prop].instanceID; }
+                if      ( nodes[ prop ].name === "Citta Piacenza" )                { var node_Piacenza        = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Citta Piacenza label1" )         { var node_Piacenza_label1 = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Citta Piacenza label2" )         { var node_Piacenza_label2 = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Citta Cremona" )                 { var node_Cremona         = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Citta Cremona label1" )          { var node_Cremona_label1  = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Citta Cremona label2" )          { var node_Cremona_label2  = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Mappa est" )                     { var node_Mappa_est       = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Mappa ovest" )                   { var node_Mappa_ovest     = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Fiume Po est" )                  { var node_Po_est          = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Fiume Po ovest" )                { var node_Po_ovest        = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Inondazione est" && nodes[prop].type === "MatrixTransform" )   { var node_Inonda_est   = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Inondazione ovest" && nodes[prop].type === "MatrixTransform" ) { var node_Inonda_ovest = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Sezione" )                       { var node_Sezione         = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Sezione cut" )                   { var node_Sezione_clip    = nodes[prop].instanceID; }
+                else if ( nodes[ prop ].name === "Struttura" )                     { var node_Struttura       = nodes[prop].instanceID; }
 
               }
             }
 
-            api.hide(node_Sezione_clip);
-            api.hide(node_Struttura);
+            api.hide(node_Sezione);
+            api.hide(node_Cremona_label1);
+            api.hide(node_Piacenza_label1);
+            api.hide(node_Mappa_ovest);
+            api.hide(node_Po_ovest);
+            api.hide(node_Inonda_ovest);
 
-            if ( node_Piacenza && node_Piacenza_label && node_Cremona && node_Cremona_label ) {
+            var azimuth;
+            if ( node_Piacenza_label1 && node_Piacenza_label2 && node_Cremona_label1 && node_Cremona_label2 ) {
+              setInterval(function(){
+                if (buttonO.innerHTML == "Città on") {
+                  api.getCameraLookAt(function(err, camera) {
+                    var Cx = camera.position[0];
+                    var Cy = camera.position[1];
+                    var Tx = camera.target[0];
+                    var Ty = camera.target[1];
+                    azimuth = Math.atan2(Cy-Ty, Cx-Tx);
+                    if ( azimuth>=-1.80 && azimuth<=1.34 ) {
+                      api.hide(node_Cremona_label2);
+                      api.hide(node_Piacenza_label2);
+                      api.show(node_Cremona_label1);
+                      api.show(node_Piacenza_label1);
+                      api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Sezione1.jpg', texture_Sezione);
+                    }
+                    else {
+                      api.hide(node_Cremona_label1);
+                      api.hide(node_Piacenza_label1);
+                      api.show(node_Cremona_label2);
+                      api.show(node_Piacenza_label2);
+                      api.updateTexture('https://riccardorocca.github.io/Fondazione_Piacenza_Cremona/Sezione2.jpg', texture_Sezione);
+                    }
+                  });
+                }
+              },1000); //time interval = 500 ms
+            }
+
+
+            if ( node_Piacenza && node_Piacenza_label1 && node_Piacenza_label2 && node_Cremona && node_Cremona_label1 && node_Cremona_label2 ) {
               buttonO.addEventListener( 'click', function() {
                 switch(buttonO.innerHTML) {
                   case "Città on":
                     buttonO.innerHTML = "Città off";
                     buttonO.style.backgroundColor = "#888888";
                     api.hide(node_Piacenza);
-                    api.hide(node_Piacenza_label);
                     api.hide(node_Cremona);
-                    api.hide(node_Cremona_label);
+                    api.hide(node_Cremona_label1);
+                    api.hide(node_Piacenza_label1);
+                    api.hide(node_Cremona_label2);
+                    api.hide(node_Piacenza_label2);
                     break;
                   case "Città off":
                     buttonO.innerHTML = "Città on";
                     buttonO.style.backgroundColor = "#1caad9";
                     api.show(node_Piacenza);
-                    api.show(node_Piacenza_label);
                     api.show(node_Cremona);
-                    api.show(node_Cremona_label);
                     break;
                 }
               });
@@ -167,6 +204,7 @@
                     clearInterval(timer);
                     api.translate(node_Inonda_ovest, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
                     api.translate(node_Inonda_est, [0,0,0], {duration: 0, easing: 'easeOutQuad'});
+                    //api.rotate(node_Inonda_est, [1, 0, 0, 1], {duration: 0.1, easing: 'easeOutQuad'});
                     break;
                   case "Inondazione max":
                     buttonC.innerHTML = "Inondazione min";
@@ -241,6 +279,7 @@
             for ( var prop in textures ) {
               //alert(textures[prop].name);
               if (textures[prop].name === "Topografia.jpg") { var texture_Topo = textures[prop].uid; }
+              if (textures[prop].name === "Sezione2.jpg") { var texture_Sezione = textures[prop].uid; }
             }
 
             if ( texture_Topo ) {
@@ -274,11 +313,23 @@
           window.open("https://sites.google.com/view/riccardorocca/home/drone-projects/fondazione-di-piacenza-e-cremona");
         });
 
+        buttonY.addEventListener( 'click', function() {
+          api.getCameraLookAt(function(err, camera) {
+            var Cx = camera.position[0];
+            var Cy = camera.position[1];
+            var Tx = camera.target[0];
+            var Ty = camera.target[1];
+            var azimuth = Math.atan2(Cy-Ty, Cx-Tx);
+            alert(azimuth);
+          });
+        });
+
       });
     };
 
     // Load the model
     client.init( model, {
+      camera: 0,
       success: success,
       error: error,
       ui_infos: 0,
@@ -287,16 +338,6 @@
       watermark: 1,
       supersample: 0
     });
-
-/*
-    function alpha() {
-      timer = setInterval(function(){
-        a += Math.PI/100;
-        if ( a >= 2*Math.PI ) { a = 0 };
-      }, 50); //time interval = 500 ms
-      return a;
-    }
-*/
 
   </script>
 
@@ -341,13 +382,12 @@
 
     button:hover {opacity: 1;}
     button:active {font-weight: bold;}
-    #keyA1 {margin-top: 10px; width: 49%; display: inline; font-size: x-small;}
+    #keyA1 {margin-top: 10px; width: 49%; display: inline; font-size: x-small; background: #888888;}
     #keyA2 {margin-top: 10px; width: 48%; display: inline; font-size: x-small;}
     #keyE {margin-top: 10px;}
     #keyD1 {background: #1caad9; width: 31%; display: inline; font-size: x-small;}
     #keyD2 {background: #888888; width: 32%; display: inline; font-size: x-small;}
     #keyD3 {background: #888888; width: 31%; display: inline; font-size: x-small;}
-    #keyF {background: #888888;}
     #keyZ {margin-top: 10px;}
 
   </style>
